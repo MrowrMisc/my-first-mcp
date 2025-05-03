@@ -9,11 +9,8 @@ from mcp.server.models import InitializationOptions
 
 # from mcp.shared.transports.streamable_http_server import StreamableHTTPServerTransport
 from mcp.server.streamable_http import StreamableHTTPServerTransport
-from mcp.types import (
-    LoggingLevel,
-    LoggingMessageNotification,
-    ToolsCapability,
-)
+from mcp.shared.message import SessionMessage
+from mcp.types import JSONRPCMessage, JSONRPCNotification, ToolsCapability
 from starlette.responses import Response
 
 app = FastAPI()
@@ -66,17 +63,18 @@ async def mcp_entrypoint(request: Request) -> Response:
         print("Connected to transport")
 
         # Send a quick "hello" log notification to confirm activity
-        from mcp.shared.message import SessionMessage
 
-        await write_stream.send(
-            SessionMessage(
-                LoggingMessageNotification(
-                    jsonrpc="2.0",
-                    method="logging/message",
-                    params={"level": LoggingLevel.INFO, "message": "🔌 Hello from MCP server!"},
-                )
-            )
+        notif = JSONRPCNotification(
+            method="notifications/message",
+            params={
+                "level": "info",
+                "data": "🔌 Hello from MCP server!",
+            },
+            jsonrpc="2.0",
         )
+
+        wrapped = JSONRPCMessage(root=notif)
+        await write_stream.send(SessionMessage(message=wrapped))
 
         # Start processing
         await mcp_server.run(
