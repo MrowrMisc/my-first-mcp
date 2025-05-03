@@ -3,14 +3,12 @@
 import types as mcp_types
 
 from fastapi import FastAPI, Request
-from mcp import ServerCapabilities
 from mcp.server import Server
-from mcp.server.models import InitializationOptions
 
 # from mcp.shared.transports.streamable_http_server import StreamableHTTPServerTransport
 from mcp.server.streamable_http import StreamableHTTPServerTransport
 from mcp.shared.message import SessionMessage
-from mcp.types import JSONRPCMessage, JSONRPCNotification, ToolsCapability
+from mcp.types import JSONRPCMessage, JSONRPCNotification
 from starlette.responses import Response
 
 app = FastAPI()
@@ -19,6 +17,23 @@ app = FastAPI()
 mcp_server = Server("MyMCPServer")
 
 from mcp import types as mcp_types  # the real one, not Python's built-in types!
+
+
+@mcp_server.list_prompts()
+async def list_prompts() -> list[mcp_types.Prompt]:
+    return [
+        mcp_types.Prompt(
+            name="say_hello",
+            displayName="Say Hello",
+            description="Just returns a greeting",
+            inputs=[],
+        )
+    ]
+
+
+@mcp_server.get_prompt()
+async def get_prompt(name: str, arguments: dict[str, str] | None) -> mcp_types.GetPromptResult:
+    return mcp_types.GetPromptResult(messages=[mcp_types.TextContent(type="text", text="Hello world!")])
 
 
 @mcp_server.list_tools()
@@ -43,6 +58,10 @@ mcp_server._handle_request = debug_handle_request
 async def echo_tool(ctx, arguments: dict[str, str]) -> dict[str, str]:
     print(f"Echo tool called with arguments: {arguments}")
     return {"echo": arguments.get("message", "")}
+
+
+init_options = mcp_server.create_initialization_options()
+print("Initialization options:", init_options.model_dump())
 
 
 # This is the handler that connects the server transport to FastAPI
@@ -77,18 +96,7 @@ async def mcp_entrypoint(request: Request) -> Response:
         await write_stream.send(SessionMessage(message=wrapped))
 
         # Start processing
-        await mcp_server.run(
-            read_stream,
-            write_stream,
-            initialization_options=InitializationOptions(
-                server_name="My MCP Server",
-                server_version="1.0.0",
-                capabilities=ServerCapabilities(
-                    tools=ToolsCapability(),
-                ),
-            ),
-            stateless=True,
-        )
+        await mcp_server.run(read_stream, write_stream, stateless=True, initialization_options=init_options)
 
     print("Transport closed, returning response")
     return Response(status_code=204)
