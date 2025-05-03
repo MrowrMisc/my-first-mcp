@@ -31,6 +31,18 @@ async def list_prompts() -> list[mcp_types.Prompt]:
     ]
 
 
+@mcp_server.tool()
+def add(x: int, y: int) -> int:
+    """Adds two numbers together"""
+    return x + y
+
+
+@mcp_server.tool()
+def shout(message: str) -> str:
+    """Shout a message loudly"""
+    return message.upper() + "!!!"
+
+
 @mcp_server.get_prompt()
 async def get_prompt(name: str, arguments: dict[str, str] | None) -> mcp_types.GetPromptResult:
     return mcp_types.GetPromptResult(messages=[mcp_types.TextContent(type="text", text="Hello world!")])
@@ -42,15 +54,15 @@ async def handle_list_tools() -> list[mcp_types.Tool]:
     return []
 
 
-original_handler = mcp_server._handle_request
+# original_handler = mcp_server._handle_request
 
 
-async def debug_handle_request(req: mcp_types.ServerRequest) -> mcp_types.ServerResult:
-    print("📥 MCP Server received request method:", getattr(req.root, "method", "<no method>"))
-    return await original_handler(req)
+# async def debug_handle_request(req: mcp_types.ServerRequest) -> mcp_types.ServerResult:
+#     print("📥 MCP Server received request method:", getattr(req.root, "method", "<no method>"))
+#     return await original_handler(req)
 
 
-mcp_server._handle_request = debug_handle_request
+# mcp_server._handle_request = debug_handle_request
 
 
 # Set up tools (example)
