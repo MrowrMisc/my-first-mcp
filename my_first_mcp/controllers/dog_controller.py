@@ -23,8 +23,9 @@ async def get(dog_name: str, repo: DogRepository = Depends(get_repo)):
 
 
 @router.get(
-    "/dogs"
-    # operation_id="get_all_dogs",
+    "/dogs",
+    name="hello? update please :)",
+    operation_id="get_all_dogs_wooohoo",
 )
 async def get_all(repo: DogRepository = Depends(get_repo)):
     return repo.get_all()
@@ -32,7 +33,7 @@ async def get_all(repo: DogRepository = Depends(get_repo)):
 
 @router.post("/dog", operation_id="create_dog")
 async def create(dog: Dog, repo: DogRepository = Depends(get_repo)):
-    """docstring here Create a new dog"""
+    """docstring here Create a new dog!"""
     return repo.create(dog=dog)
 
 

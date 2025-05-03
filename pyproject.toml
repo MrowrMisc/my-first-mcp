@@ -13,7 +13,17 @@ version = "0.1.0"
 [tool.poe.tasks]
 # api.shell = "uvicorn my_first_mcp.app:app --reload --workers 1"
 # mcp.script = "my_first_mcp.run:run_http"
-app.script = "my_first_mcp.run:run_mcp_and_api"
+# app.script = "my_first_mcp.run:run_mcp_and_api"
+
+# api.shell = "uvicorn my_first_mcp.mcp:app --reload --port 9000"
+
+# FastMCP server
+# mcp.shell = "uvicorn my_first_mcp.mcp:sse_mcp --reload --port 8000"
+
+# Combo runner (requires concurrently installed)
+# dev.shell = "concurrently -n api,mcp -c blue,green \"poe api\" \"poe mcp\""
+
+dev.shell = "python my_first_mcp/dev_runner.py"
 
 [dependency-groups]
 dev = [
