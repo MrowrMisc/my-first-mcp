@@ -1,0 +1,23 @@
+[project]
+dependencies = [
+  "fastapi>=0.115.12",
+  "fastmcp>=2.2.6",
+  "uvicorn>=0.34.2",
+]
+description = "Add your description here"
+name = "my-first-mcp"
+readme = "README.md"
+requires-python = "<3.14,>=3.12"
+version = "0.1.0"
+
+[tool.poe.tasks]
+api.shell = "uvicorn my_first_mcp.app:app --reload --workers 1"
+
+[dependency-groups]
+dev = [
+  "assertpy>=1.1",
+  "httpx>=0.28.1",
+  "poethepoet>=0.34.0",
+  "pytest>=8.3.5",
+  "pytest-sugar>=1.0.0",
+]
