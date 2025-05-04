@@ -1,6 +1,5 @@
 # my_first_mcp/mcp_server.py
 
-import types as mcp_types
 
 from fastapi import FastAPI, Request
 from mcp.server import Server
@@ -16,42 +15,40 @@ app = FastAPI()
 # Global MCP Server instance
 mcp_server = Server("MyMCPServer")
 
-from mcp import types as mcp_types  # the real one, not Python's built-in types!
+
+# @mcp_server.list_prompts()
+# async def list_prompts() -> list[mcp_types.Prompt]:
+#     return [
+#         mcp_types.Prompt(
+#             name="say_hello",
+#             displayName="Say Hello",
+#             description="Just returns a greeting",
+#             inputs=[],
+#         )
+#     ]
 
 
-@mcp_server.list_prompts()
-async def list_prompts() -> list[mcp_types.Prompt]:
-    return [
-        mcp_types.Prompt(
-            name="say_hello",
-            displayName="Say Hello",
-            description="Just returns a greeting",
-            inputs=[],
-        )
-    ]
+# @mcp_server.tool()
+# def add(x: int, y: int) -> int:
+#     """Adds two numbers together"""
+#     return x + y
 
 
-@mcp_server.tool()
-def add(x: int, y: int) -> int:
-    """Adds two numbers together"""
-    return x + y
+# @mcp_server.tool()
+# def shout(message: str) -> str:
+#     """Shout a message loudly"""
+#     return message.upper() + "!!!"
 
 
-@mcp_server.tool()
-def shout(message: str) -> str:
-    """Shout a message loudly"""
-    return message.upper() + "!!!"
+# @mcp_server.get_prompt()
+# async def get_prompt(name: str, arguments: dict[str, str] | None) -> mcp_types.GetPromptResult:
+#     return mcp_types.GetPromptResult(messages=[mcp_types.TextContent(type="text", text="Hello world!")])
 
 
-@mcp_server.get_prompt()
-async def get_prompt(name: str, arguments: dict[str, str] | None) -> mcp_types.GetPromptResult:
-    return mcp_types.GetPromptResult(messages=[mcp_types.TextContent(type="text", text="Hello world!")])
-
-
-@mcp_server.list_tools()
-async def handle_list_tools() -> list[mcp_types.Tool]:
-    print("⚙️ Listing tools")
-    return []
+# @mcp_server.list_tools()
+# async def handle_list_tools() -> list[mcp_types.Tool]:
+#     print("⚙️ Listing tools")
+#     return []
 
 
 # original_handler = mcp_server._handle_request
